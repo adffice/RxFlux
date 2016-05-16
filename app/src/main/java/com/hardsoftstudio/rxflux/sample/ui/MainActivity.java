@@ -3,7 +3,6 @@ package com.hardsoftstudio.rxflux.sample.ui;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -11,10 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.hardsoftstudio.rxflux.action.RxError;
-import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.sample.R;
 import com.hardsoftstudio.rxflux.sample.SampleApp;
 import com.hardsoftstudio.rxflux.sample.actions.Actions;
@@ -24,9 +21,12 @@ import com.hardsoftstudio.rxflux.sample.stores.RepositoriesStore;
 import com.hardsoftstudio.rxflux.sample.stores.UsersStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 import static com.hardsoftstudio.rxflux.sample.SampleApp.get;
 
-public class MainActivity extends AppCompatActivity implements RxViewDispatch, RepoAdapter.OnRepoClicked {
+public class MainActivity extends BaseActivity implements RepoAdapter.OnRepoClicked {
 
   @Bind(R.id.recycler_view) RecyclerView recyclerView;
   @Bind(R.id.progress_loading) ProgressBar progress_loading;
@@ -95,12 +95,9 @@ public class MainActivity extends AppCompatActivity implements RxViewDispatch, R
     }
   }
 
-  @Override public void onRxViewRegistered() {
-    // If there is any fragment that needs to register store changes we can do it here
-  }
-
-  @Override public void onRxViewUnRegistered() {
-    // If there is any fragment that has registered for store changes we can unregister now
+  @Override public void onRxStoresUnRegister() {
+    repositoriesStore.unregister();
+    usersStore.unregister();
   }
 
   @Override public void onRxStoresRegister() {

@@ -1,10 +1,12 @@
 package com.hardsoftstudio.rxflux.dispatcher;
 
 import android.support.v4.util.ArrayMap;
+
 import com.hardsoftstudio.rxflux.action.RxAction;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.hardsoftstudio.rxflux.util.LoggerManager;
+
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -53,6 +55,15 @@ public class Dispatcher {
     }
   }
 
+  public <T extends RxActionDispatch> void unRegisterRxAction(final T object) {
+    final String tag = object.getClass().getSimpleName();
+    Subscription subscription = rxActionMap.get(tag);
+    if (subscription != null && !subscription.isUnsubscribed()) {
+      subscription.unsubscribe();
+      rxActionMap.remove(tag);
+    }
+  }
+
   public <T extends RxViewDispatch> void registerRxError(final T object) {
     final String tag = object.getClass().getSimpleName() + "_error";
     Subscription subscription = rxActionMap.get(tag);
@@ -70,7 +81,7 @@ public class Dispatcher {
     }
   }
 
-  public <T extends RxViewDispatch> void registerRxStore(final T object) {
+  public <T extends RxViewDispatch> void registerRxView(final T object) {
     final String tag = object.getClass().getSimpleName();
     Subscription subscription = rxStoreMap.get(tag);
     if (subscription == null || subscription.isUnsubscribed()) {
@@ -108,7 +119,7 @@ public class Dispatcher {
     }
   }
 
-  public <T extends RxViewDispatch> void unregisterRxStore(final T object) {
+  public <T extends RxViewDispatch> void unregisterRxView(final T object) {
     String tag = object.getClass().getSimpleName();
     Subscription subscription = rxStoreMap.get(tag);
     if (subscription != null && !subscription.isUnsubscribed()) {
