@@ -1,12 +1,10 @@
 package com.hardsoftstudio.rxflux.dispatcher;
 
 import android.support.v4.util.ArrayMap;
-
 import com.hardsoftstudio.rxflux.action.RxAction;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.hardsoftstudio.rxflux.util.LoggerManager;
-
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -42,7 +40,7 @@ public class Dispatcher {
     Subscription subscription = rxActionMap.get(tag);
     if (subscription == null || subscription.isUnsubscribed()) {
       logger.logRxStoreRegister(tag);
-      rxActionMap.put(tag, bus.get().filter(new Func1<Object, Boolean>() {
+      rxActionMap.put(tag, bus.get().onBackpressureBuffer().filter(new Func1<Object, Boolean>() {
         @Override public Boolean call(Object o) {
           return o instanceof RxAction;
         }
@@ -68,7 +66,7 @@ public class Dispatcher {
     final String tag = object.getClass().getSimpleName() + "_error";
     Subscription subscription = rxActionMap.get(tag);
     if (subscription == null || subscription.isUnsubscribed()) {
-      rxActionMap.put(tag, bus.get().filter(new Func1<Object, Boolean>() {
+      rxActionMap.put(tag, bus.get().onBackpressureBuffer().filter(new Func1<Object, Boolean>() {
         @Override public Boolean call(Object o) {
           return o instanceof RxError;
         }
@@ -86,7 +84,7 @@ public class Dispatcher {
     Subscription subscription = rxStoreMap.get(tag);
     if (subscription == null || subscription.isUnsubscribed()) {
       logger.logViewRegisterToStore(tag);
-      rxStoreMap.put(tag, bus.get().filter(new Func1<Object, Boolean>() {
+      rxStoreMap.put(tag, bus.get().onBackpressureBuffer().filter(new Func1<Object, Boolean>() {
         @Override public Boolean call(Object o) {
           return o instanceof RxStoreChange;
         }
