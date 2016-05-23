@@ -10,6 +10,7 @@ import com.hardsoftstudio.rxflux.store.RxStoresRegister;
  * Created by dallas on 16-5-16.
  */
 public abstract class BaseFragment extends Fragment implements RxViewDispatch, RxStoresRegister {
+
   @Override public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     onRxStoresRegister();
